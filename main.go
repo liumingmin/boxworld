@@ -20,7 +20,7 @@ func main() {
 
 	go func() {
 		for {
-			pWorld.Step(1.0/60.0, 100, 1000)
+			pWorld.Step(1.0/60.0, 10, 10)
 			pWorld.ClearForces()
 
 			time.Sleep(time.Second / 60)
@@ -52,7 +52,7 @@ func createWorld() *box2d.B2World {
 	fixDef.Density = 1.0
 
 	polyShape := box2d.MakeB2PolygonShape()
-	polyShape.SetAsBox(20, 2)
+	polyShape.SetAsBox(20, 4)
 	fixDef.Shape = &polyShape
 
 	var bodyDef = box2d.MakeB2BodyDef()
@@ -114,22 +114,11 @@ func JoinGame(ctx *gin.Context) {
 		Version:  0,
 		Charset:  0,
 	}
-	_, err := ws.Accept(ctx, ctx.Writer, ctx.Request, connMeta,
-		nil, &connCallback{}, []int{})
+	_, err := ws.Accept(ctx, ctx.Writer, ctx.Request, connMeta)
 	if err != nil {
 		log.Error(ctx, "Accept client connection failed. error: %v", err)
 		return
 	}
-}
-
-type connCallback struct {
-}
-
-func (c *connCallback) ConnFinished(clientId string) {
-
-}
-func (c *connCallback) DisconnFinished(clientId string) {
-
 }
 
 type BodyUserData struct {
