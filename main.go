@@ -50,9 +50,11 @@ func createWorld() *box2d.B2World {
 	fixDef.Friction = 0.99
 	fixDef.Restitution = 0.51
 	fixDef.Density = 1.0
+	fixDef.Filter = box2d.MakeB2Filter()
+	fixDef.Filter.GroupIndex = 1
 
 	polyShape := box2d.MakeB2PolygonShape()
-	polyShape.SetAsBox(20, 4)
+	polyShape.SetAsBox(20, 2)
 	fixDef.Shape = &polyShape
 
 	var bodyDef = box2d.MakeB2BodyDef()
@@ -88,6 +90,8 @@ func createWorld() *box2d.B2World {
 		world.CreateBody(&bodyDef).CreateFixtureFromDef(&fixDef)
 	}
 
+	world.SetContactListener(&ContactProc{})
+
 	var nextBody = world.GetBodyList()
 	for {
 		if nextBody == nil {
@@ -104,6 +108,26 @@ func createWorld() *box2d.B2World {
 	}
 
 	return &world
+}
+
+type ContactProc struct {
+}
+
+func (c *ContactProc) BeginContact(contact box2d.B2ContactInterface) {
+	log.Error(context.Background(), "test")
+}
+
+func (c *ContactProc) EndContact(contact box2d.B2ContactInterface) {
+	log.Error(context.Background(), contact.GetFixtureA().GetUserData(), contact.GetFixtureA().GetBody().GetPosition())
+	log.Error(context.Background(), contact.GetFixtureB().GetUserData(), contact.GetFixtureB().GetBody().GetPosition())
+}
+
+func (c *ContactProc) PreSolve(contact box2d.B2ContactInterface, oldManifold box2d.B2Manifold) {
+
+}
+
+func (c *ContactProc) PostSolve(contact box2d.B2ContactInterface, impulse *box2d.B2ContactImpulse) {
+
 }
 
 func JoinGame(ctx *gin.Context) {
@@ -186,9 +210,9 @@ func Jump(ctx context.Context, conn *ws.Connection, msg *ws.P_MESSAGE) error {
 	log.Info(ctx, "body is :%v", body.GetUserData())
 
 	body.SetAwake(true)
-	body.ApplyLinearImpulse(box2d.B2Vec2{X: 3, Y: 3}, body.GetPosition(), true)
-	//body.ApplyLinearImpulse(box2d.B2Vec2{X: 8, Y: -15}, body.GetPosition(), true)
-	//body.SetAngularVelocity(1.5)
+	//body.ApplyLinearImpulse(box2d.B2Vec2{X: 3, Y: 3}, body.GetPosition(), true)
+	body.ApplyLinearImpulse(box2d.B2Vec2{X: 8, Y: -15}, body.GetPosition(), true)
+	body.SetAngularVelocity(1.5)
 
 	//updateWorld(pWorld)
 	return nil
