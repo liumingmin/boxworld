@@ -43,7 +43,7 @@ func main() {
 var worldBodies sync.Map
 
 func createWorld() *box2d.B2World {
-	gravity := box2d.MakeB2Vec2(0.0, -10)
+	gravity := box2d.MakeB2Vec2(0.0, 0)
 	world := box2d.MakeB2World(gravity)
 
 	var fixDef = box2d.MakeB2FixtureDef()
@@ -51,12 +51,11 @@ func createWorld() *box2d.B2World {
 	fixDef.Restitution = 0.51
 	fixDef.Density = 1.0
 
-	polyShape := &box2d.B2PolygonShape{}
+	polyShape := box2d.MakeB2PolygonShape()
 	polyShape.SetAsBox(20, 2)
-	fixDef.Shape = polyShape
+	fixDef.Shape = &polyShape
 
 	var bodyDef = box2d.MakeB2BodyDef()
-	bodyDef.Awake = false
 	bodyDef.Type = box2d.B2BodyType.B2_staticBody
 	bodyDef.Position = box2d.B2Vec2{10, 400.0/30.0 + 1.8}
 
@@ -75,14 +74,14 @@ func createWorld() *box2d.B2World {
 	var bodiesNum = 13
 	bodyDef.Type = box2d.B2BodyType.B2_dynamicBody
 	for i := 0; i < bodiesNum; i++ {
-		polyShapeDyn := &box2d.B2PolygonShape{}
-		fixDef.Shape = polyShapeDyn
+		polyShapeDyn := box2d.MakeB2PolygonShape()
+		fixDef.Shape = &polyShapeDyn
 		polyShapeDyn.SetAsBox(0.4, 0.4)
 
 		bodyDef.Position.X = float64(((i + 1) * 2) % 8)
 		bodyDef.Position.Y = 3
 
-		bodyDef.UserData = &BodyUserData{
+		bodyDef.UserData = BodyUserData{
 			BodyId: fmt.Sprint(i),
 		}
 
@@ -95,9 +94,9 @@ func createWorld() *box2d.B2World {
 			break
 		}
 
-		userData, _ := nextBody.GetUserData().(*BodyUserData)
+		userData, _ := nextBody.GetUserData().(BodyUserData)
 
-		if userData != nil && userData.BodyId != "" {
+		if userData.BodyId != "" {
 			worldBodies.Store(userData.BodyId, nextBody)
 		}
 
@@ -154,9 +153,9 @@ func updateWorld(world *box2d.B2World) {
 			break
 		}
 
-		userData, _ := body.GetUserData().(*BodyUserData)
+		userData, _ := body.GetUserData().(BodyUserData)
 
-		if userData != nil && userData.BodyId != "" && body.IsAwake() {
+		if userData.BodyId != "" && body.IsAwake() {
 			update[userData.BodyId] = &BodyState{
 				Pos:             body.GetPosition(),
 				Angle:           body.GetAngle(),
@@ -192,11 +191,14 @@ func Jump(ctx context.Context, conn *ws.Connection, msg *ws.P_MESSAGE) error {
 	if !ok {
 		return nil
 	}
+
 	body, _ := bodyIntfs.(*box2d.B2Body)
 
-	//body.SetAwake(true)
+	log.Info(ctx, "body is :%v", body.GetUserData())
+
+	body.SetAwake(true)
 	body.ApplyLinearImpulse(box2d.B2Vec2{X: 3, Y: 3}, body.GetPosition(), true)
-	//body.ApplyForce(box2d.B2Vec2{X: 8, Y: -15}, body.GetPosition(), true)
+	//body.ApplyLinearImpulse(box2d.B2Vec2{X: 8, Y: -15}, body.GetPosition(), true)
 	//body.SetAngularVelocity(1.5)
 
 	//updateWorld(pWorld)

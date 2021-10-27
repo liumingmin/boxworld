@@ -69,7 +69,8 @@ function updateWorld(data) {
 		var userData = body.GetUserData();
 		if(userData && userData.bodyId && data[userData.bodyId]){		
 			var update = data[userData.bodyId];
-						
+
+			console.log(update);
 			//console.log('position difference:', (body.GetPosition().y - update.p.y) * 30, body.GetLinearVelocity().y);
 			
 			body.SetAwake(true);			
