@@ -16,7 +16,13 @@ import (
 var pWorld *box2d.B2World
 
 func main() {
-	pWorld = createWorld()
+
+	gravity := box2d.MakeB2Vec2(0.0, 0)
+	world := box2d.MakeB2World(gravity)
+	pWorld = &world
+	//createWorld(pWorld)
+
+	loadmap(pWorld)
 
 	go func() {
 		for {
@@ -42,9 +48,7 @@ func main() {
 
 var worldBodies sync.Map
 
-func createWorld() *box2d.B2World {
-	gravity := box2d.MakeB2Vec2(0.0, 0)
-	world := box2d.MakeB2World(gravity)
+func createWorld(world *box2d.B2World) {
 
 	var fixDef = box2d.MakeB2FixtureDef()
 	fixDef.Friction = 0.99
@@ -106,8 +110,6 @@ func createWorld() *box2d.B2World {
 
 		nextBody = nextBody.GetNext()
 	}
-
-	return &world
 }
 
 type ContactProc struct {
@@ -143,10 +145,6 @@ func JoinGame(ctx *gin.Context) {
 		log.Error(ctx, "Accept client connection failed. error: %v", err)
 		return
 	}
-}
-
-type BodyUserData struct {
-	BodyId string
 }
 
 type BodyState struct {
