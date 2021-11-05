@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"sync"
-	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/liumingmin/box2d"
@@ -24,21 +23,21 @@ func main() {
 
 	loadmap(pWorld)
 
-	go func() {
-		for {
-			pWorld.Step(1.0/60.0, 10, 10)
-			pWorld.ClearForces()
+	//go func() {
+	//	for {
+	//		pWorld.Step(1.0/60.0, 10, 10)
+	//		pWorld.ClearForces()
+	//
+	//		time.Sleep(time.Second / 60)
+	//	}
+	//}()
 
-			time.Sleep(time.Second / 60)
-		}
-	}()
-
-	go func() {
-		for {
-			updateWorld(pWorld)
-			time.Sleep(time.Second / 10)
-		}
-	}()
+	//go func() {
+	//	for {
+	//		updateWorld(pWorld)
+	//		time.Sleep(time.Second / 10)
+	//	}
+	//}()
 
 	e := gin.Default()
 	e.Static("/static", "./static")
@@ -94,7 +93,7 @@ func createWorld(world *box2d.B2World) {
 		world.CreateBody(&bodyDef).CreateFixtureFromDef(&fixDef)
 	}
 
-	world.SetContactListener(&ContactProc{})
+	//world.SetContactListener(&ContactProc{})
 
 	var nextBody = world.GetBodyList()
 	for {
@@ -112,26 +111,6 @@ func createWorld(world *box2d.B2World) {
 	}
 }
 
-type ContactProc struct {
-}
-
-func (c *ContactProc) BeginContact(contact box2d.B2ContactInterface) {
-	log.Error(context.Background(), "test")
-}
-
-func (c *ContactProc) EndContact(contact box2d.B2ContactInterface) {
-	log.Error(context.Background(), contact.GetFixtureA().GetUserData(), contact.GetFixtureA().GetBody().GetPosition())
-	log.Error(context.Background(), contact.GetFixtureB().GetUserData(), contact.GetFixtureB().GetBody().GetPosition())
-}
-
-func (c *ContactProc) PreSolve(contact box2d.B2ContactInterface, oldManifold box2d.B2Manifold) {
-
-}
-
-func (c *ContactProc) PostSolve(contact box2d.B2ContactInterface, impulse *box2d.B2ContactImpulse) {
-
-}
-
 func JoinGame(ctx *gin.Context) {
 	connMeta := &ws.ConnectionMeta{
 		UserId:   ctx.DefaultQuery("uid", "1"),
@@ -140,11 +119,29 @@ func JoinGame(ctx *gin.Context) {
 		Version:  0,
 		Charset:  0,
 	}
-	_, err := ws.Accept(ctx, ctx.Writer, ctx.Request, connMeta)
+	_, err := ws.Accept(ctx, ctx.Writer, ctx.Request, connMeta, ws.ConnectCbOption(&ConnectCb{connMeta.UserId}))
 	if err != nil {
 		log.Error(ctx, "Accept client connection failed. error: %v", err)
 		return
 	}
+}
+
+type ConnectCb struct {
+	Uid string
+}
+
+func (c *ConnectCb) ConnFinished(clientId string) {
+	d, _ := json.Marshal([]string{c.Uid})
+	packet := &ws.P_MESSAGE{
+		ProtocolId: 1,
+		Data:       d,
+	}
+
+	conn, _ := ws.Clients.Find(clientId)
+	conn.SendMsg(context.Background(), packet, nil)
+}
+func (c *ConnectCb) DisconnFinished(clientId string) {
+
 }
 
 type BodyState struct {
@@ -152,6 +149,12 @@ type BodyState struct {
 	Angle           float64
 	LinearVelocity  box2d.B2Vec2
 	AngularVelocity float64
+}
+
+type PlayerPos struct {
+	Id string  `json:"id"`
+	X  float64 `json:"x"`
+	Y  float64 `json:"y"`
 }
 
 func updateWorld(world *box2d.B2World) {
@@ -216,6 +219,36 @@ func Jump(ctx context.Context, conn *ws.Connection, msg *ws.P_MESSAGE) error {
 	return nil
 }
 
+func sendPlayerPosToClients(exceptId string) {
+
+	ws.Clients.RangeConnsByFunc(func(s string, connection *ws.Connection) bool {
+		if exceptId == connection.UserId() {
+			return true
+		}
+
+		obj, _ := connection.GetCommDataValue("pos")
+		pos, _ := obj.(PlayerPos)
+
+		d, _ := json.Marshal([]PlayerPos{pos})
+		packet := &ws.P_MESSAGE{
+			ProtocolId: 2,
+			Data:       d,
+		}
+		connection.SendMsg(context.Background(), packet, nil)
+		return true
+	})
+}
+
+func updatePlayerPos(ctx context.Context, conn *ws.Connection, msg *ws.P_MESSAGE) error {
+	playerPos := PlayerPos{}
+	json.Unmarshal(msg.Data, &playerPos)
+	playerPos.Id = conn.UserId()
+	conn.SetCommDataValue("pos", playerPos)
+
+	sendPlayerPosToClients(conn.UserId())
+	return nil
+}
+
 func init() {
-	ws.RegisterHandler(12, Jump)
+	ws.RegisterHandler(3, updatePlayerPos)
 }

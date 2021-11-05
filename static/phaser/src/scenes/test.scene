@@ -1,0 +1,126 @@
+{
+    "id": "b2bed745-d6f0-45e2-bee0-2a73bb995c13",
+    "sceneType": "SCENE",
+    "settings": {
+        "preloadPackFiles": [],
+        "createMethodName": "editorCreate",
+        "sceneKey": "test",
+        "borderWidth": 288,
+        "borderHeight": 192
+    },
+    "displayList": [
+        {
+            "type": "TilemapLayer",
+            "id": "df9bdd89-75ba-47a0-b9b5-8cb4015a28c0",
+            "label": "ground",
+            "scope": "CLASS",
+            "components": [],
+            "tilemapId": "f7f57bae-3d8a-4bc0-8be9-8a1d83a6c9d4",
+            "layerName": "Ground",
+            "tilesets": [
+                "beach_tileset"
+            ]
+        },
+        {
+            "type": "TilemapLayer",
+            "id": "f80ab413-a2c5-4249-a640-ac176815183a",
+            "label": "fringe",
+            "components": [],
+            "tilemapId": "f7f57bae-3d8a-4bc0-8be9-8a1d83a6c9d4",
+            "layerName": "Fringe",
+            "tilesets": [
+                "beach_tileset"
+            ]
+        },
+        {
+            "type": "TilemapLayer",
+            "id": "33dfdc85-5cf5-43c8-a4ee-c13f3acbcda7",
+            "label": "over",
+            "components": [],
+            "tilemapId": "f7f57bae-3d8a-4bc0-8be9-8a1d83a6c9d4",
+            "layerName": "Over",
+            "tilesets": [
+                "beach_tileset"
+            ]
+        },
+        {
+            "prefabId": "67e1897c-2af2-411f-a5a2-77afe7cd6418",
+            "id": "a3e8b31e-b46d-410c-9922-50e8b323985b",
+            "unlock": [
+                "x",
+                "y",
+                "originX",
+                "originY"
+            ],
+            "label": "cherry",
+            "components": [],
+            "x": 706,
+            "y": 320
+        },
+        {
+            "type": "Image",
+            "id": "63fa4223-29dd-466f-ad96-8d0078571189",
+            "label": "left_button",
+            "components": [],
+            "texture": {
+                "key": "left-button"
+            },
+            "x": 25,
+            "y": 169,
+            "scaleX": 0.39899614692006335,
+            "scaleY": 0.39899614692006335
+        },
+        {
+            "type": "Image",
+            "id": "e40fc6dd-b850-47f5-86bd-53b063b0570d",
+            "label": "right_button",
+            "components": [],
+            "texture": {
+                "key": "right-button"
+            },
+            "x": 68,
+            "y": 169,
+            "scaleX": 0.39899614692006335,
+            "scaleY": 0.39899614692006335
+        },
+        {
+            "type": "Image",
+            "id": "5e73d25b-2c6f-4d81-9ed3-3a55652325a2",
+            "label": "jump_button",
+            "components": [],
+            "texture": {
+                "key": "jump-button"
+            },
+            "x": 248,
+            "y": 173,
+            "scaleX": 0.39899614692006335,
+            "scaleY": 0.39899614692006335
+        }
+    ],
+    "plainObjects": [
+        {
+            "id": "f7f57bae-3d8a-4bc0-8be9-8a1d83a6c9d4",
+            "type": "Tilemap",
+            "label": "island",
+            "key": "island",
+            "tilesets": [
+                {
+                    "name": "beach_tileset",
+                    "imageKey": "beach_tileset"
+                }
+            ]
+        }
+    ],
+    "meta": {
+        "app": "Phaser Editor 2D - Scene Editor",
+        "url": "https://phasereditor2d.com",
+        "contentType": "phasereditor2d.core.scene.SceneContentType",
+        "version": 2
+    },
+    "lists": [
+        {
+            "id": "dcc842b2-93c9-45f7-b3c9-0542ad352cf3",
+            "label": "list"
+        }
+    ]
+}

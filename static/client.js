@@ -20,6 +20,7 @@ function setupCanvas() {
 function _jump() {
 	let wsMessage = new proto.ws.P_MESSAGE;
 	wsMessage.setProtocolId(12);
+	wsMessage.setData()
 	let wsBin = wsMessage.serializeBinary();
 	ws.send(wsBin);
 }
