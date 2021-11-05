@@ -428,7 +428,7 @@ class Level extends Phaser.Scene {
 		this.connected = false;
 		this.players = {};
 		
-		this.ws = new WebSocket("ws://127.0.0.1:8003/join?uid="+this.uuid());
+		this.ws = new WebSocket("ws://10.11.244.107:8003/join?uid="+this.uuid());
 		
 		this.ws.onopen =  () =>{
 			this.ws.binaryType = 'arraybuffer'; //必须加上此类型
@@ -445,6 +445,10 @@ class Level extends Phaser.Scene {
 					//str array
 					let playerIds = JSON.parse(this.decode(wsMessage.getData()));
 					for(var i=0;i<playerIds.length;i++){
+						if(this.players[playerIds[i]]){
+							continue;
+						}
+
 						const playerInstance = new Player(this, 738, 121);
 						this.add.existing(playerInstance);
 						playerInstance.flipX = true;

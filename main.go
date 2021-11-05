@@ -137,8 +137,30 @@ func (c *ConnectCb) ConnFinished(clientId string) {
 		Data:       d,
 	}
 
-	conn, _ := ws.Clients.Find(clientId)
-	conn.SendMsg(context.Background(), packet, nil)
+	uids := make([]string, 0)
+	ws.Clients.RangeConnsByFunc(func(s string, connection *ws.Connection) bool {
+		if c.Uid == connection.UserId() {
+			return true
+		}
+		uids = append(uids, connection.UserId())
+		return true
+	})
+
+	ws.Clients.RangeConnsByFunc(func(s string, connection *ws.Connection) bool {
+		if c.Uid == connection.UserId() {
+			d2, _ := json.Marshal(uids)
+			packet2 := &ws.P_MESSAGE{
+				ProtocolId: 1,
+				Data:       d2,
+			}
+			connection.SendMsg(context.Background(), packet2, nil)
+			return true
+		}
+
+		connection.SendMsg(context.Background(), packet, nil)
+		return true
+	})
+
 }
 func (c *ConnectCb) DisconnFinished(clientId string) {
 
@@ -219,17 +241,14 @@ func Jump(ctx context.Context, conn *ws.Connection, msg *ws.P_MESSAGE) error {
 	return nil
 }
 
-func sendPlayerPosToClients(exceptId string) {
+func sendPlayerPosToClients(movedPlayer *PlayerPos) {
 
 	ws.Clients.RangeConnsByFunc(func(s string, connection *ws.Connection) bool {
-		if exceptId == connection.UserId() {
+		if movedPlayer.Id == connection.UserId() {
 			return true
 		}
 
-		obj, _ := connection.GetCommDataValue("pos")
-		pos, _ := obj.(PlayerPos)
-
-		d, _ := json.Marshal([]PlayerPos{pos})
+		d, _ := json.Marshal([]PlayerPos{*movedPlayer})
 		packet := &ws.P_MESSAGE{
 			ProtocolId: 2,
 			Data:       d,
@@ -245,7 +264,7 @@ func updatePlayerPos(ctx context.Context, conn *ws.Connection, msg *ws.P_MESSAGE
 	playerPos.Id = conn.UserId()
 	conn.SetCommDataValue("pos", playerPos)
 
-	sendPlayerPosToClients(conn.UserId())
+	sendPlayerPosToClients(&playerPos)
 	return nil
 }
 
