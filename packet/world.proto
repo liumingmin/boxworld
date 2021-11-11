@@ -1,0 +1,10 @@
+syntax = "proto3";
+package packet;
+
+option go_package = "/packet";
+
+message POSITION
+{
+    float   x             = 1;
+    float   y             = 2;
+}

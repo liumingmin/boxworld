@@ -291,16 +291,19 @@ class Level extends Phaser.Scene {
 
 		var vel = 150;
 
+		var aniKey = "";
 		if (leftDown) {
 
 			this.player.body.velocity.x = -vel;
-			this.player.play("player/run/player-run", true);
+			aniKey="player/run/player-run";
+			this.player.play(aniKey, true);
 			this.player.flipX = true;
 
 		} else if (rightDown) {
 
 			this.player.body.velocity.x = vel;
-			this.player.play("player/run/player-run", true);
+			aniKey = "player/run/player-run";
+			this.player.play(aniKey, true);
 			this.player.flipX = false;
 
 		} else {
@@ -308,27 +311,37 @@ class Level extends Phaser.Scene {
 			this.player.body.velocity.x = 0;
 
 			if (this.wasd.crouch.isDown) {
-
-				this.player.play("player/crouch/player-crouch", true);
+				aniKey = "player/crouch/player-crouch";
+				this.player.play(aniKey, true);
 
 			} else {
-
-				this.player.play("player/idle/player-idle", true);
+				aniKey = "player/idle/player-idle";
+				this.player.play(aniKey, true);
 			}
 		}
 
 		// jump animation
 
 		if (this.player.body.velocity.y < 0) {
-
-			this.player.play("player/jump/player-jump-1", true);
+			aniKey = "player/jump/player-jump-1";
+			this.player.play(aniKey, true);
 
 		} else if (this.player.body.velocity.y > 0) {
-
-			this.player.play("player/jump/player-jump-2", true);
+			aniKey = "player/jump/player-jump-2";
+			this.player.play(aniKey, true);
 		}
 
-		this.sendPlayerToServer(this.player);
+		this.sendPlayerToServer(this.player,aniKey);
+	}
+
+	syncOtherPlayers(pl,pos){
+		pl.setPosition(pos.x,pos.y);
+		pl.flipX = (pos.fx==1);
+		pl.body.velocity.x = pos.vx;
+		pl.body.velocity.y = pos.vy;
+		if(pos.ani!=""){
+			pl.play(pos.ani, true);
+		}
 	}
 
 	bindKeys() {
@@ -408,15 +421,17 @@ class Level extends Phaser.Scene {
 	ws;
 	connected;
 
-	sendPlayerToServer(pl){
+	sendPlayerToServer(pl,aniKey){
 		if (!this.ws || !this.connected){
 			return ;
 		}
 
-		let pos = JSON.stringify({"x":pl.body.x,"y":pl.body.y});
+		let pos = JSON.stringify({"x":pl.body.x,"y":pl.body.y,"fx":(pl.flipX?1:0),
+		"vx":pl.body.velocity.x,"vy":pl.body.velocity.y,"dn":(this.wasd.crouch.isDown?1:0),
+		"ani":aniKey});
 
 		let wsMessage = new proto.ws.P_MESSAGE;
-		wsMessage.setProtocolId(3);
+		wsMessage.setProtocolId(4);
 		wsMessage.setData(this.encode(pos));
 		let wsBin = wsMessage.serializeBinary();
 		this.ws.send(wsBin);
@@ -441,9 +456,9 @@ class Level extends Phaser.Scene {
 		this.ws.onmessage =(e) =>{
 			let wsMessage = proto.ws.P_MESSAGE.deserializeBinary(e.data)
 			switch (wsMessage.getProtocolId()) {
-				case 1:
+				case 2:
 					//str array
-					let playerIds = JSON.parse(this.decode(wsMessage.getData()));
+					var playerIds = JSON.parse(this.decode(wsMessage.getData()));
 					for(var i=0;i<playerIds.length;i++){
 						if(this.players[playerIds[i]]){
 							continue;
@@ -456,7 +471,17 @@ class Level extends Phaser.Scene {
 						this.players[playerIds[i]] = playerInstance;
 					}
 					break;
-				case 2:
+				case 3:
+					var playerIds = JSON.parse(this.decode(wsMessage.getData()));
+					for(var i=0;i<playerIds.length;i++){
+						if(!this.players[playerIds[i]]){
+							continue;
+						}
+
+						this.players[playerIds[i]].destroy();
+					}
+					break;
+				case 4:
 				   //object array
 				   let updatePoses = this.decode(wsMessage.getData());
 				   let playerPos = JSON.parse(updatePoses); 	
@@ -465,11 +490,7 @@ class Level extends Phaser.Scene {
 						const playerInstance =this.players[pl.id];
 						
 						if(playerInstance){
-							console.log(pl.id);
-							//playerInstance.body.x = pl.x;
-							//playerInstance.body.y = pl.y;
-							
-							playerInstance.setPosition(pl.x,pl.y);
+							this.syncOtherPlayers(playerInstance, pl);
 						}
 					}
 					break;
