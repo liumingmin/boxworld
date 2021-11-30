@@ -20,7 +20,7 @@ func main() {
 }
 
 func JoinGame(ctx *gin.Context) {
-	connMeta := &ws.ConnectionMeta{
+	connMeta := ws.ConnectionMeta{
 		UserId:   ctx.DefaultQuery("uid", "0000"),
 		Typed:    0,
 		DeviceId: "",
@@ -40,10 +40,6 @@ type ConnectCb struct {
 
 func (c *ConnectCb) ConnFinished(clientId string) {
 	d, _ := json.Marshal([]string{c.Uid})
-	packet := &ws.P_MESSAGE{
-		ProtocolId: constant.PROT_JOIN_GAME,
-		Data:       d,
-	}
 
 	uids := make([]string, 0)
 	ws.Clients.RangeConnsByFunc(func(s string, connection *ws.Connection) bool {
@@ -57,29 +53,32 @@ func (c *ConnectCb) ConnFinished(clientId string) {
 	ws.Clients.RangeConnsByFunc(func(s string, connection *ws.Connection) bool {
 		if c.Uid == connection.UserId() {
 			d2, _ := json.Marshal(uids)
-			packet2 := &ws.P_MESSAGE{
-				ProtocolId: constant.PROT_JOIN_GAME,
-				Data:       d2,
-			}
+
+			packet2 := ws.GetPMessage()
+			packet2.ProtocolId = constant.PROT_JOIN_GAME
+			packet2.Data = d2
+
 			connection.SendMsg(context.Background(), packet2, nil)
 			return true
 		}
 
+		packet := ws.GetPMessage()
+		packet.ProtocolId = constant.PROT_JOIN_GAME
+		packet.Data = d
 		connection.SendMsg(context.Background(), packet, nil)
 		return true
 	})
 }
 func (c *ConnectCb) DisconnFinished(clientId string) {
 	d, _ := json.Marshal([]string{c.Uid})
-	packet := &ws.P_MESSAGE{
-		ProtocolId: constant.PROT_LEAVE_GAME,
-		Data:       d,
-	}
 
 	ws.Clients.RangeConnsByFunc(func(s string, connection *ws.Connection) bool {
 		if c.Uid == connection.UserId() {
 			return true
 		}
+		packet := ws.GetPMessage()
+		packet.ProtocolId = constant.PROT_LEAVE_GAME
+		packet.Data = d
 
 		connection.SendMsg(context.Background(), packet, nil)
 		return true
@@ -119,10 +118,11 @@ func sendPlayerPosToClients(ctx context.Context, movedPlayer *PlayerPos) {
 		}
 
 		d, _ := json.Marshal([]PlayerPos{*movedPlayer})
-		packet := &ws.P_MESSAGE{
-			ProtocolId: constant.PROT_PLAYER_POS,
-			Data:       d,
-		}
+
+		packet := ws.GetPMessage()
+		packet.ProtocolId = constant.PROT_PLAYER_POS
+		packet.Data = d
+
 		connection.SendMsg(ctx, packet, nil)
 		return true
 	})
