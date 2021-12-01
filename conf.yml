@@ -1,1 +1,3 @@
-logLevel: error
+log:
+  logLevel: error
+  stdout: true

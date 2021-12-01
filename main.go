@@ -4,9 +4,9 @@ import (
 	"context"
 	"encoding/json"
 
-	"github.com/liumingmin/boxworld/constant"
-
+	"github.com/DeanThompson/ginpprof"
 	"github.com/gin-gonic/gin"
+	"github.com/liumingmin/boxworld/constant"
 	"github.com/liumingmin/goutils/log"
 	"github.com/liumingmin/goutils/ws"
 )
@@ -16,6 +16,9 @@ func main() {
 	e := gin.Default()
 	e.Static("/static", "./static")
 	e.GET("/join", JoinGame)
+
+	ginpprof.WrapGroup(&e.RouterGroup)
+
 	e.Run(":8003")
 }
 
@@ -112,12 +115,12 @@ type PlayerPos struct {
 }
 
 func sendPlayerPosToClients(ctx context.Context, movedPlayer *PlayerPos) {
+	d, _ := json.Marshal([]PlayerPos{*movedPlayer})
+
 	ws.Clients.RangeConnsByFunc(func(s string, connection *ws.Connection) bool {
 		if movedPlayer.Id == connection.UserId() {
 			return true
 		}
-
-		d, _ := json.Marshal([]PlayerPos{*movedPlayer})
 
 		packet := ws.GetPMessage()
 		packet.ProtocolId = constant.PROT_PLAYER_POS
