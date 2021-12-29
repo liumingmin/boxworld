@@ -163,6 +163,7 @@ class Level extends Phaser.Scene {
 		const player = new Player(this, 738, 121);
 		this.add.existing(player);
 		player.flipX = true;
+		player.flipY = false;
 
 		// left_button
 		const left_button = this.add.image(26, 170, "left-button");
@@ -182,9 +183,13 @@ class Level extends Phaser.Scene {
 		jump_button.scaleY = 0.39899614692006335;
 		jump_button.tintTopLeft = 16627125;
 
+		// prefab1
+		const prefab1 = new Prefab1(this, 799, 144);
+		this.add.existing(prefab1);
+
 		// lists
-		const items = [cherry, cherry_1, cherry_2, cherry_3, cherry_4, cherry_5, gem, gem_1, gem_2, gem_3, gem_1_1, gem_2_1]
-		const enemies = [frog_1, frog, opossum_1, opossum, eagle, eagle_2]
+		const items = [cherry, cherry_1, cherry_2, cherry_3, cherry_4, cherry_5, gem, gem_1, gem_2, gem_3, gem_1_1, gem_2_1];
+		const enemies = [frog_1, frog, opossum_1, opossum, eagle, eagle_2];
 
 		// eagle (components)
 		const eagleCharacterMove = new CharacterMove(eagle);
@@ -286,7 +291,7 @@ class Level extends Phaser.Scene {
 
 		if (jumpDown && body.onFloor()) {
 
-			this.player.body.velocity.y = -170;
+			this.player.getBody().velocity.y = -170;
 		}
 
 		var vel = 150;
@@ -294,41 +299,41 @@ class Level extends Phaser.Scene {
 		var aniKey = "";
 		if (leftDown) {
 
-			this.player.body.velocity.x = -vel;
+			this.player.getBody().velocity.x = -vel;
 			aniKey="player/run/player-run";
-			this.player.play(aniKey, true);
-			this.player.flipX = true;
+			this.player.playerSprite.play(aniKey, true);
+			this.player.setFlipX(true);
 
 		} else if (rightDown) {
 
-			this.player.body.velocity.x = vel;
+			this.player.getBody().velocity.x = vel;
 			aniKey = "player/run/player-run";
-			this.player.play(aniKey, true);
-			this.player.flipX = false;
+			this.player.playerSprite.play(aniKey, true);
+			this.player.setFlipX(false);
 
 		} else {
 
-			this.player.body.velocity.x = 0;
+			this.player.getBody().velocity.x = 0;
 
 			if (this.wasd.crouch.isDown) {
 				aniKey = "player/crouch/player-crouch";
-				this.player.play(aniKey, true);
+				this.player.playerSprite.play(aniKey, true);
 
 			} else {
 				aniKey = "player/idle/player-idle";
-				this.player.play(aniKey, true);
+				this.player.playerSprite.play(aniKey, true);
 			}
 		}
 
 		// jump animation
 
-		if (this.player.body.velocity.y < 0) {
+		if (this.player.getBody().velocity.y < 0) {
 			aniKey = "player/jump/player-jump-1";
-			this.player.play(aniKey, true);
+			this.player.playerSprite.play(aniKey, true);
 
-		} else if (this.player.body.velocity.y > 0) {
+		} else if (this.player.getBody().velocity.y > 0) {
 			aniKey = "player/jump/player-jump-2";
-			this.player.play(aniKey, true);
+			this.player.playerSprite.play(aniKey, true);
 		}
 
 		this.sendPlayerToServer(this.player,aniKey);
@@ -336,7 +341,7 @@ class Level extends Phaser.Scene {
 
 	syncOtherPlayers(pl,pos){
 		pl.setPosition(pos.x,pos.y);
-		pl.flipX = (pos.fx==1);
+		pl.setFlipX(pos.fx==1);
 		pl.body.velocity.x = pos.vx;
 		pl.body.velocity.y = pos.vy;
 		if(pos.ani!=""){
@@ -442,9 +447,9 @@ class Level extends Phaser.Scene {
 		this.ws = null;
 		this.connected = false;
 		this.players = {};
-		
+
 		this.ws = new WebSocket("ws://10.11.244.107:8003/join?uid="+this.uuid());
-		
+
 		this.ws.onopen =  () =>{
 			this.ws.binaryType = 'arraybuffer'; //必须加上此类型
 			console.log('Client has connected to the server!');
@@ -466,7 +471,7 @@ class Level extends Phaser.Scene {
 
 						const playerInstance = new Player(this, 738, 121);
 						this.add.existing(playerInstance);
-						playerInstance.flipX = true;
+						playerInstance.setFlipX(true);
 						this.physics.add.collider(playerInstance, this.layer);
 						this.players[playerIds[i]] = playerInstance;
 					}
@@ -488,7 +493,7 @@ class Level extends Phaser.Scene {
 					for(var i=0;i<playerPos.length;i++){
 						let pl = playerPos[i];
 						const playerInstance =this.players[pl.id];
-						
+
 						if(playerInstance){
 							this.syncOtherPlayers(playerInstance, pl);
 						}

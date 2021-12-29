@@ -485,6 +485,288 @@
             "frameRate": 24,
             "skipMissedFrames": true,
             "repeat": -1
+        },
+        {
+            "key": "animation1",
+            "type": "frame",
+            "frames": [
+                {
+                    "key": "dungeon",
+                    "frame": "altars/altar_jiyva_0.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "dungeon",
+                    "frame": "altars/altar_jiyva_1.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "dungeon",
+                    "frame": "altars/altar_jiyva_11.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "dungeon",
+                    "frame": "altars/altar_jiyva_2.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "dungeon",
+                    "frame": "altars/altar_jiyva_3.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "dungeon",
+                    "frame": "altars/altar_jiyva_4.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "dungeon",
+                    "frame": "altars/altar_jiyva_5.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "dungeon",
+                    "frame": "altars/altar_jiyva_6.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "dungeon",
+                    "frame": "altars/altar_jiyva_7.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "dungeon",
+                    "frame": "altars/altar_jiyva_8.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "dungeon",
+                    "frame": "altars/altar_jiyva_9.png",
+                    "duration": 0,
+                    "keyframe": false
+                }
+            ],
+            "frameRate": 6,
+            "skipMissedFrames": true,
+            "repeat": -1
+        },
+        {
+            "key": "animation2",
+            "type": "frame",
+            "frames": [
+                {
+                    "key": "dungeon",
+                    "frame": "altars/altar_xom_0.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "dungeon",
+                    "frame": "altars/altar_xom_1.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "dungeon",
+                    "frame": "altars/altar_xom_2.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "dungeon",
+                    "frame": "altars/altar_xom_3.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "dungeon",
+                    "frame": "altars/altar_xom_4.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "dungeon",
+                    "frame": "altars/altar_xom_5.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "dungeon",
+                    "frame": "altars/altar_xom_6.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "dungeon",
+                    "frame": "altars/altar_xom_7.png",
+                    "duration": 0,
+                    "keyframe": false
+                }
+            ],
+            "frameRate": 24,
+            "skipMissedFrames": true,
+            "repeat": -1
+        },
+        {
+            "key": "animation3",
+            "type": "frame",
+            "frames": [
+                {
+                    "key": "dungeon",
+                    "frame": "altars/altar_makhleb_flame_1.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "dungeon",
+                    "frame": "altars/altar_makhleb_flame_2.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "dungeon",
+                    "frame": "altars/altar_makhleb_flame_3.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "dungeon",
+                    "frame": "altars/altar_makhleb_flame_4.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "dungeon",
+                    "frame": "altars/altar_makhleb_flame_5.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "dungeon",
+                    "frame": "altars/altar_makhleb_flame_6.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "dungeon",
+                    "frame": "altars/altar_makhleb_flame_7.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "dungeon",
+                    "frame": "altars/altar_makhleb_flame_8.png",
+                    "duration": 0,
+                    "keyframe": false
+                }
+            ],
+            "frameRate": 12,
+            "skipMissedFrames": true,
+            "repeat": -1
+        },
+        {
+            "key": "animation4",
+            "type": "frame",
+            "frames": [
+                {
+                    "key": "dungeon",
+                    "frame": "altars/nemelex_1.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "dungeon",
+                    "frame": "altars/nemelex_2.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "dungeon",
+                    "frame": "altars/nemelex_3.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "dungeon",
+                    "frame": "altars/nemelex_4.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "dungeon",
+                    "frame": "altars/nemelex_5.png",
+                    "duration": 0,
+                    "keyframe": false
+                }
+            ],
+            "frameRate": 24,
+            "skipMissedFrames": true,
+            "repeat": -1
+        },
+        {
+            "key": "animation5",
+            "type": "frame",
+            "frames": [
+                {
+                    "key": "dungeon",
+                    "frame": "gateways/enter_gehenna_1.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "dungeon",
+                    "frame": "gateways/enter_gehenna_2.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "dungeon",
+                    "frame": "gateways/enter_gehenna_3.png",
+                    "duration": 0,
+                    "keyframe": false
+                }
+            ],
+            "frameRate": 6,
+            "skipMissedFrames": true,
+            "repeat": -1
+        },
+        {
+            "key": "animation6",
+            "type": "frame",
+            "frames": [
+                {
+                    "key": "dungeon",
+                    "frame": "altars/qazlal_0.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "dungeon",
+                    "frame": "altars/qazlal_1.png",
+                    "duration": 0,
+                    "keyframe": false
+                },
+                {
+                    "key": "dungeon",
+                    "frame": "altars/qazlal_2.png",
+                    "duration": 0,
+                    "keyframe": false
+                }
+            ],
+            "frameRate": 6,
+            "skipMissedFrames": true,
+            "repeat": -1
         }
     ],
     "globalTimeScale": 1,

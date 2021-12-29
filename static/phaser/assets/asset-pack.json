@@ -44,6 +44,12 @@
                 "key": "dino"
             },
             {
+                "atlasURL": "assets/atlas/dungeon.json",
+                "textureURL": "assets/atlas/dungeon.png",
+                "type": "atlas",
+                "key": "dungeon"
+            },
+            {
                 "url": "assets/sprites/instructions.png",
                 "type": "image",
                 "key": "instructions"
@@ -52,6 +58,12 @@
                 "url": "assets/maps/island.json",
                 "type": "tilemapTiledJSON",
                 "key": "island"
+            },
+            {
+                "atlasURL": "assets/atlas/item.json",
+                "textureURL": "assets/atlas/item.png",
+                "type": "atlas",
+                "key": "item"
             },
             {
                 "url": "assets/buttons/jump-button.png",

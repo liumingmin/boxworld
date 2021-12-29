@@ -3,24 +3,39 @@
 
 /* START OF COMPILED CODE */
 
-class Player extends Phaser.GameObjects.Sprite {
+class Player extends Phaser.GameObjects.Container {
 
-	constructor(scene, x, y, texture, frame) {
-		super(scene, x ?? 78, y ?? 37, texture || "atlas", frame ?? "player/idle/player-idle-2");
+	constructor(scene, x, y) {
+		super(scene, x ?? 78, y ?? 37);
+
+		// sword
+		const sword = scene.add.sprite(14, 1, "item", "weapon/two_handed_sword.png");
+		sword.scaleX = 0.5;
+		sword.scaleY = 0.5;
+		this.add(sword);
+
+		// player_climb_player_climb_1
+		const player_climb_player_climb_1 = scene.add.sprite(0, 0, "atlas", "player/idle/player-idle-2");
+		this.add(player_climb_player_climb_1);
 
 		// this (components)
 		const thisPhysics = new Physics(this);
 		thisPhysics.bodyGravity = 500;
 		const thisPhysicsBody = new PhysicsBody(this);
 		thisPhysicsBody.bodyX = 12;
-		thisPhysicsBody.bodyY = 16;
 		thisPhysicsBody.bodyWidth = 8;
 		thisPhysicsBody.bodyHeight = 16;
-		const thisStartAnimation = new StartAnimation(this);
-		thisStartAnimation.animationKey = "player/idle/player-idle";
+
+		// player_climb_player_climb_1 (components)
+		const player_climb_player_climb_1StartAnimation = new StartAnimation(player_climb_player_climb_1);
+		player_climb_player_climb_1StartAnimation.animationKey = "player/idle/player-idle";
+
+		this.sword = sword;
+		this.player_climb_player_climb_1 = player_climb_player_climb_1;
 
 		/* START-USER-CTR-CODE */
 
+		this.playerSprite = player_climb_player_climb_1;
 		this.hurtFlag = false;
 
 		this.scene.time.addEvent({
@@ -37,6 +52,11 @@ class Player extends Phaser.GameObjects.Sprite {
 		/* END-USER-CTR-CODE */
 	}
 
+	/** @type {Phaser.GameObjects.Sprite} */
+	sword;
+	/** @type {Phaser.GameObjects.Sprite} */
+	player_climb_player_climb_1;
+
 	/* START-USER-CODE */
 
 	/**
@@ -50,7 +70,18 @@ class Player extends Phaser.GameObjects.Sprite {
 
 		if (this.hurtFlag) {
 
-			this.play("player/hurt/player-hurt", true);
+			this.playerSprite.play("player/hurt/player-hurt", true);
+		}
+	}
+
+	setFlipX(f){
+
+		this.playerSprite.flipX = f;
+		this.sword.flipX = f;
+		if(this.sword.flipX){
+			this.sword.x = -14;
+		}else{
+			this.sword.x =14;
 		}
 	}
 
