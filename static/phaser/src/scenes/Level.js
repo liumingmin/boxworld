@@ -184,8 +184,8 @@ class Level extends Phaser.Scene {
 		jump_button.tintTopLeft = 16627125;
 
 		// prefab1
-		const prefab1 = new Prefab1(this, 799, 144);
-		this.add.existing(prefab1);
+		// const prefab1 = new Prefab1(this, 799, 144);
+		// this.add.existing(prefab1);
 
 		// lists
 		const items = [cherry, cherry_1, cherry_2, cherry_3, cherry_4, cherry_5, gem, gem_1, gem_2, gem_3, gem_1_1, gem_2_1];
@@ -448,7 +448,7 @@ class Level extends Phaser.Scene {
 		this.connected = false;
 		this.players = {};
 
-		this.ws = new WebSocket("ws://10.11.244.107:8003/join?uid="+this.uuid());
+		this.ws = new WebSocket("ws://127.0.0.1:8003/join?uid="+this.uuid());
 
 		this.ws.onopen =  () =>{
 			this.ws.binaryType = 'arraybuffer'; //必须加上此类型
