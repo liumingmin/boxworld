@@ -58,16 +58,14 @@ func (c *ConnectCb) ConnFinished(clientId string) {
 		if c.Uid == connection.UserId() {
 			d2, _ := json.Marshal(uids)
 
-			packet2 := ws.GetPoolMessage()
-			packet2.PMsg().ProtocolId = constant.PROT_JOIN_GAME
+			packet2 := ws.GetPoolMessage(constant.PROT_JOIN_GAME)
 			packet2.PMsg().Data = d2
 
 			connection.SendMsg(context.Background(), packet2, nil)
 			return true
 		}
 
-		packet := ws.GetPoolMessage()
-		packet.PMsg().ProtocolId = constant.PROT_JOIN_GAME
+		packet := ws.GetPoolMessage(constant.PROT_JOIN_GAME)
 		packet.PMsg().Data = d
 		connection.SendMsg(context.Background(), packet, nil)
 		return true
@@ -80,8 +78,7 @@ func (c *ConnectCb) DisconnFinished(clientId string) {
 		if c.Uid == connection.UserId() {
 			return true
 		}
-		packet := ws.GetPoolMessage()
-		packet.PMsg().ProtocolId = constant.PROT_LEAVE_GAME
+		packet := ws.GetPoolMessage(constant.PROT_LEAVE_GAME)
 		packet.PMsg().Data = d
 
 		connection.SendMsg(context.Background(), packet, nil)
@@ -118,15 +115,16 @@ type PlayerPos struct {
 func sendPlayerPosToClients(ctx context.Context, movedPlayer *PlayerPos) {
 	d, _ := json.Marshal([]PlayerPos{*movedPlayer})
 
+	packet := ws.NewMessage()
+	packet.PMsg().ProtocolId = constant.PROT_PLAYER_POS
+	packet.PMsg().Data = d
+
 	ws.ClientConnHub.RangeConnsByFunc(func(s string, connection *ws.Connection) bool {
 		if movedPlayer.Id == connection.UserId() {
 			return true
 		}
 
-		packet := ws.GetPoolMessage()
-		packet.PMsg().ProtocolId = constant.PROT_PLAYER_POS
-		packet.PMsg().Data = d
-
+		//packet := ws.GetPoolMessage(constant.PROT_PLAYER_POS)
 		connection.SendMsg(ctx, packet, nil)
 		return true
 	})
