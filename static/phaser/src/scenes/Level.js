@@ -162,8 +162,6 @@ class Level extends Phaser.Scene {
 		// player
 		const player = new Player(this, 738, 121);
 		this.add.existing(player);
-		player.flipX = true;
-		player.flipY = false;
 
 		// left_button
 		const left_button = this.add.image(26, 170, "left-button");
@@ -186,6 +184,10 @@ class Level extends Phaser.Scene {
 		// prefab1
 		// const prefab1 = new Prefab1(this, 799, 144);
 		// this.add.existing(prefab1);
+
+		// attack_button
+		const attack_button = this.add.image(221, 169, "item", "weapon/executioner_axe_2_new.png");
+		attack_button.tintTopLeft = 16627125;
 
 		// lists
 		const items = [cherry, cherry_1, cherry_2, cherry_3, cherry_4, cherry_5, gem, gem_1, gem_2, gem_3, gem_1_1, gem_2_1];
@@ -213,11 +215,16 @@ class Level extends Phaser.Scene {
 		new FixedToCamera(jump_button);
 		new ControllerButton(jump_button);
 
+		// attack_button (components)
+		new ControllerButton(attack_button);
+		new FixedToCamera(attack_button);
+
 		this.layer = layer;
 		this.player = player;
 		this.left_button = left_button;
 		this.right_button = right_button;
 		this.jump_button = jump_button;
+		this.attack_button = attack_button;
 		this.map = map;
 		this.items = items;
 		this.enemies = enemies;
@@ -235,6 +242,8 @@ class Level extends Phaser.Scene {
 	right_button;
 	/** @type {Phaser.GameObjects.Image} */
 	jump_button;
+	/** @type {Phaser.GameObjects.Image} */
+	attack_button;
 	/** @type {Array<Cherry|Gem>} */
 	items;
 	/** @type {Array<Frog|Opossum|Eagle>} */
@@ -334,6 +343,11 @@ class Level extends Phaser.Scene {
 		} else if (this.player.getBody().velocity.y > 0) {
 			aniKey = "player/jump/player-jump-2";
 			this.player.playerSprite.play(aniKey, true);
+		}
+
+		const attackDown = ControllerButton.getComponent(this.attack_button).isDown;
+		if(attackDown){
+			this.player.rotateSword();
 		}
 
 		this.sendPlayerToServer(this.player,aniKey);
@@ -474,6 +488,8 @@ class Level extends Phaser.Scene {
 						playerInstance.setFlipX(true);
 						this.physics.add.collider(playerInstance, this.layer);
 						this.players[playerIds[i]] = playerInstance;
+
+						playerInstance.setScale()
 					}
 					break;
 				case 3:

@@ -471,8 +471,7 @@
             "components": [],
             "x": 738,
             "y": 121,
-            "flipX": true,
-            "flipY": false
+            "nestedPrefabs": []
         },
         {
             "type": "Image",
@@ -541,6 +540,23 @@
             "components": [],
             "x": 799,
             "y": 144
+        },
+        {
+            "type": "Image",
+            "id": "7a579558-9128-4d7f-b161-5ded96bee14c",
+            "label": "attack_button",
+            "scope": "CLASS",
+            "components": [
+                "ControllerButton",
+                "FixedToCamera"
+            ],
+            "texture": {
+                "key": "item",
+                "frame": "weapon/executioner_axe_2_new.png"
+            },
+            "x": 221,
+            "y": 169,
+            "tintTopLeft": "#fdb5b5"
         }
     ],
     "plainObjects": [

@@ -9,9 +9,10 @@ class Player extends Phaser.GameObjects.Container {
 		super(scene, x ?? 78, y ?? 37);
 
 		// sword
-		const sword = scene.add.sprite(14, 1, "item", "weapon/two_handed_sword.png");
+		const sword = scene.add.sprite(4, 9, "item", "weapon/two_handed_sword.png");
 		sword.scaleX = 0.5;
 		sword.scaleY = 0.5;
+		sword.setOrigin(0, 1);
 		this.add(sword);
 
 		// player_climb_player_climb_1
@@ -49,6 +50,25 @@ class Player extends Phaser.GameObjects.Container {
 
 		this.scene.events.on("update", () => this.updatePlayer());
 
+		this.swordTween = this.scene.add.tween({
+            targets: this.sword,
+            ease: 'Sine.easeInOut',
+			rotation: (3.14*2 - (3.14*1.6)),
+            duration: 100,
+            delay: 50,
+            repeat: 0,
+            yoyo: true
+        });
+
+		this.swordTweenFlip = this.scene.add.tween({
+            targets: this.sword,
+            ease: 'Sine.easeInOut',
+			rotation: (3.14*2 - (3.14*1.8)),
+            duration: 100,
+            delay: 50,
+            repeat: 0,
+            yoyo: true
+        });
 		/* END-USER-CTR-CODE */
 	}
 
@@ -58,7 +78,8 @@ class Player extends Phaser.GameObjects.Container {
 	player_climb_player_climb_1;
 
 	/* START-USER-CODE */
-
+	swordTween;
+	swordTweenFlip;
 	/**
 	 * @return {Phaser.Physics.Arcade.Body} 
 	 */
@@ -75,13 +96,14 @@ class Player extends Phaser.GameObjects.Container {
 	}
 
 	setFlipX(f){
-
 		this.playerSprite.flipX = f;
 		this.sword.flipX = f;
 		if(this.sword.flipX){
-			this.sword.x = -14;
+			//this.sword.x = -19;
+			//this.sword.setOrigin(-0.8, 1);
 		}else{
-			this.sword.x =14;
+			//this.sword.x = 4;
+			//this.sword.setOrigin(0, 1);
 		}
 	}
 
@@ -103,6 +125,13 @@ class Player extends Phaser.GameObjects.Container {
 		body.velocity.x = (this.scale.x == 1) ? -100 : 100;
 	}
 
+	rotateSword(){
+		if(this.sword.flipX){
+			this.swordTween.play();
+		}else{
+			this.swordTween.play();
+		}
+	}
 	/* END-USER-CODE */
 }
 

@@ -1,0 +1,41 @@
+{
+    "id": "8b4d0a1e-b4bf-4a1a-bc3c-35b1f8aaca06",
+    "sceneType": "PREFAB",
+    "settings": {
+        "preloadMethodName": "",
+        "preloadPackFiles": [],
+        "createMethodName": "",
+        "borderWidth": 288,
+        "borderHeight": 192
+    },
+    "displayList": [
+        {
+            "type": "Sprite",
+            "id": "73831edb-1c4c-40d2-9e26-05078218a169",
+            "label": "sprite",
+            "components": [
+                "Physics",
+                "PhysicsBody",
+                "StartAnimation"
+            ],
+            "PhysicsBody.bodyX": 16,
+            "PhysicsBody.bodyY": 16,
+            "PhysicsBody.bodyWidth": 8,
+            "PhysicsBody.bodyHeight": 11,
+            "StartAnimation.animationKey": "animation6",
+            "texture": {
+                "key": "dungeon",
+                "frame": "altars/qazlal_0.png"
+            },
+            "x": 134,
+            "y": 62
+        }
+    ],
+    "plainObjects": [],
+    "meta": {
+        "app": "Phaser Editor 2D - Scene Editor",
+        "url": "https://phasereditor2d.com",
+        "contentType": "phasereditor2d.core.scene.SceneContentType",
+        "version": 3
+    }
+}

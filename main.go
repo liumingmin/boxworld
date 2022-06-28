@@ -86,21 +86,6 @@ func (c *ConnectCb) DisconnFinished(clientId string) {
 	})
 }
 
-//type GameMap struct {
-//	players sync.Map
-//}
-//
-//func (m *GameMap) Enter(uid string) {
-//	m.players.Range(func(key, value interface{}) bool {
-//
-//		return true
-//	})
-//}
-//
-//func (m *GameMap) Leave(uid string) {
-//
-//}
-
 type PlayerPos struct {
 	Id  string  `json:"id"`
 	X   float64 `json:"x"`
