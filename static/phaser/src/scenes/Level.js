@@ -182,8 +182,8 @@ class Level extends Phaser.Scene {
 		jump_button.tintTopLeft = 16627125;
 
 		// prefab1
-		// const prefab1 = new Prefab1(this, 799, 144);
-		// this.add.existing(prefab1);
+		const prefab1 = new Prefab1(this, 799, 144);
+		this.add.existing(prefab1);
 
 		// attack_button
 		const attack_button = this.add.image(221, 169, "item", "weapon/executioner_axe_2_new.png");
