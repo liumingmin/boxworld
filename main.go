@@ -34,7 +34,7 @@ func JoinGame(ctx *gin.Context) {
 	_, err := ws.AcceptGin(ctx, connMeta,
 		ws.ConnEstablishHandlerOption(ConnFinished),
 		ws.ConnClosedHandlerOption(DisconnFinished),
-		)
+	)
 	if err != nil {
 		log.Error(ctx, "Accept client connection failed. error: %v", err)
 		return
