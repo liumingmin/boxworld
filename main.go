@@ -31,23 +31,22 @@ func JoinGame(ctx *gin.Context) {
 		Version:  0,
 		Charset:  0,
 	}
-	_, err := ws.AcceptGin(ctx, connMeta, ws.ConnectCbOption(&ConnectCb{connMeta.UserId}))
+	_, err := ws.AcceptGin(ctx, connMeta,
+		ws.ConnEstablishHandlerOption(ConnFinished),
+		ws.ConnClosedHandlerOption(DisconnFinished),
+		)
 	if err != nil {
 		log.Error(ctx, "Accept client connection failed. error: %v", err)
 		return
 	}
 }
 
-type ConnectCb struct {
-	Uid string
-}
-
-func (c *ConnectCb) ConnFinished(clientId string) {
-	d, _ := json.Marshal([]string{c.Uid})
+func ConnFinished(conn *ws.Connection) {
+	d, _ := json.Marshal([]string{conn.UserId()})
 
 	uids := make([]string, 0)
 	ws.ClientConnHub.RangeConnsByFunc(func(s string, connection *ws.Connection) bool {
-		if c.Uid == connection.UserId() {
+		if conn.UserId() == connection.UserId() {
 			return true
 		}
 		uids = append(uids, connection.UserId())
@@ -55,7 +54,7 @@ func (c *ConnectCb) ConnFinished(clientId string) {
 	})
 
 	ws.ClientConnHub.RangeConnsByFunc(func(s string, connection *ws.Connection) bool {
-		if c.Uid == connection.UserId() {
+		if conn.UserId() == connection.UserId() {
 			d2, _ := json.Marshal(uids)
 
 			packet2 := ws.GetPoolMessage(constant.PROT_JOIN_GAME)
@@ -71,11 +70,11 @@ func (c *ConnectCb) ConnFinished(clientId string) {
 		return true
 	})
 }
-func (c *ConnectCb) DisconnFinished(clientId string) {
-	d, _ := json.Marshal([]string{c.Uid})
+func DisconnFinished(conn *ws.Connection) {
+	d, _ := json.Marshal([]string{conn.UserId()})
 
 	ws.ClientConnHub.RangeConnsByFunc(func(s string, connection *ws.Connection) bool {
-		if c.Uid == connection.UserId() {
+		if conn.UserId() == connection.UserId() {
 			return true
 		}
 		packet := ws.GetPoolMessage(constant.PROT_LEAVE_GAME)
