@@ -41,7 +41,7 @@ func JoinGame(ctx *gin.Context) {
 	}
 }
 
-func ConnFinished(conn *ws.Connection) {
+func ConnFinished(ctx context.Context, conn *ws.Connection) {
 	d, _ := json.Marshal([]string{conn.UserId()})
 
 	uids := make([]string, 0)
@@ -70,7 +70,7 @@ func ConnFinished(conn *ws.Connection) {
 		return true
 	})
 }
-func DisconnFinished(conn *ws.Connection) {
+func DisconnFinished(ctx context.Context, conn *ws.Connection) {
 	d, _ := json.Marshal([]string{conn.UserId()})
 
 	ws.ClientConnHub.RangeConnsByFunc(func(s string, connection *ws.Connection) bool {
