@@ -438,10 +438,9 @@ class Level extends Phaser.Scene {
 	}
 
 	ws;
-	connected;
 
 	sendPlayerToServer(pl,aniKey){
-		if (!this.ws || !this.connected){
+		if (!this.ws || !this.ws.connected){
 			return ;
 		}
 
@@ -449,78 +448,59 @@ class Level extends Phaser.Scene {
 		"vx":pl.body.velocity.x,"vy":pl.body.velocity.y,"dn":(this.wasd.crouch.isDown?1:0),
 		"ani":aniKey});
 
-		let wsMessage = new proto.ws.P_MESSAGE;
-		wsMessage.setProtocolId(4);
-		wsMessage.setData(this.encode(pos));
-		let wsBin = wsMessage.serializeBinary();
-		this.ws.send(wsBin);
+		this.ws.sendMsg(4, this.encode(pos));
 	}
 
 	players;
 	initWs(){
-		this.ws = null;
-		this.connected = false;
+		this.ws = new WsConnection();
 		this.players = {};
 
-		this.ws = new WebSocket("ws://127.0.0.1:8003/join?uid="+this.uuid());
+		this.ws.registerMsgHandler(2, (websocket, data)=>{
+			//str array
+			var playerIds = JSON.parse(new TextDecoder().decode(data));
+			for(var i=0;i<playerIds.length;i++){
+				if(this.players[playerIds[i]]){
+					continue;
+				}
 
-		this.ws.onopen =  () =>{
-			this.ws.binaryType = 'arraybuffer'; //必须加上此类型
-			console.log('Client has connected to the server!');
-			this.connected = true;
-		};
-		this.ws.onerror =(error) =>{
-			console.log(error);
-		};
-		this.ws.onmessage =(e) =>{
-			let wsMessage = proto.ws.P_MESSAGE.deserializeBinary(e.data)
-			switch (wsMessage.getProtocolId()) {
-				case 2:
-					//str array
-					var playerIds = JSON.parse(this.decode(wsMessage.getData()));
-					for(var i=0;i<playerIds.length;i++){
-						if(this.players[playerIds[i]]){
-							continue;
-						}
+				const playerInstance = new Player(this, 738, 121);
+				this.add.existing(playerInstance);
+				playerInstance.setFlipX(true);
+				this.physics.add.collider(playerInstance, this.layer);
+				this.players[playerIds[i]] = playerInstance;
 
-						const playerInstance = new Player(this, 738, 121);
-						this.add.existing(playerInstance);
-						playerInstance.setFlipX(true);
-						this.physics.add.collider(playerInstance, this.layer);
-						this.players[playerIds[i]] = playerInstance;
-
-						playerInstance.setScale()
-					}
-					break;
-				case 3:
-					var playerIds = JSON.parse(this.decode(wsMessage.getData()));
-					for(var i=0;i<playerIds.length;i++){
-						if(!this.players[playerIds[i]]){
-							continue;
-						}
-
-						this.players[playerIds[i]].destroy();
-					}
-					break;
-				case 4:
-				   //object array
-				   let updatePoses = this.decode(wsMessage.getData());
-				   let playerPos = JSON.parse(updatePoses); 	
-					for(var i=0;i<playerPos.length;i++){
-						let pl = playerPos[i];
-						const playerInstance =this.players[pl.id];
-
-						if(playerInstance){
-							this.syncOtherPlayers(playerInstance, pl);
-						}
-					}
-					break;
+				//playerInstance.setScale();
 			}
-		};
-		this.ws.onclose = (e) =>{
-			console.log('The client has disconnected!');
-			this.connected = false;
-		};
+		});
+		this.ws.registerMsgHandler(3, (websocket, data)=>{
+			var playerIds = JSON.parse(new TextDecoder().decode(data));
+			for(var i=0;i<playerIds.length;i++){
+				if(!this.players[playerIds[i]]){
+					continue;
+				}
+
+				this.players[playerIds[i]].destroy();
+				this.players[playerIds[i]] = null;
+				delete this.players[playerIds[i]];
+			}
+		});
+		this.ws.registerMsgHandler(4, (websocket, data)=>{
+			//object array
+			let updatePoses = new TextDecoder().decode(data);
+			let playerPos = JSON.parse(updatePoses);
+
+			for(var i=0;i<playerPos.length;i++){
+				let pl = playerPos[i];
+				const playerInstance =this.players[pl.id];
+				//console.log(playerInstance);
+				if(playerInstance){
+					this.syncOtherPlayers(playerInstance, pl);
+				}
+			}
+		});
+
+		this.ws.connect("ws://127.0.0.1:8003/join?uid="+this.uuid(), 10000);
 	}
 
 	 encode(text) {

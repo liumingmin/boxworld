@@ -41,7 +41,7 @@ func JoinGame(ctx *gin.Context) {
 	}
 }
 
-func ConnFinished(ctx context.Context, conn *ws.Connection) {
+func ConnFinished(ctx context.Context, conn ws.IConnection) {
 	d, _ := json.Marshal([]string{conn.UserId()})
 
 	uids := make([]string, 0)
@@ -58,19 +58,19 @@ func ConnFinished(ctx context.Context, conn *ws.Connection) {
 			d2, _ := json.Marshal(uids)
 
 			packet2 := ws.GetPoolMessage(constant.PROT_JOIN_GAME)
-			packet2.PMsg().Data = d2
+			packet2.SetData(d2)
 
 			connection.SendMsg(context.Background(), packet2, nil)
 			return true
 		}
 
 		packet := ws.GetPoolMessage(constant.PROT_JOIN_GAME)
-		packet.PMsg().Data = d
+		packet.SetData(d)
 		connection.SendMsg(context.Background(), packet, nil)
 		return true
 	})
 }
-func DisconnFinished(ctx context.Context, conn *ws.Connection) {
+func DisconnFinished(ctx context.Context, conn ws.IConnection) {
 	d, _ := json.Marshal([]string{conn.UserId()})
 
 	ws.ClientConnHub.RangeConnsByFunc(func(s string, connection *ws.Connection) bool {
@@ -78,7 +78,7 @@ func DisconnFinished(ctx context.Context, conn *ws.Connection) {
 			return true
 		}
 		packet := ws.GetPoolMessage(constant.PROT_LEAVE_GAME)
-		packet.PMsg().Data = d
+		packet.SetData(d)
 
 		connection.SendMsg(context.Background(), packet, nil)
 		return true
@@ -99,9 +99,8 @@ type PlayerPos struct {
 func sendPlayerPosToClients(ctx context.Context, movedPlayer *PlayerPos) {
 	d, _ := json.Marshal([]PlayerPos{*movedPlayer})
 
-	packet := ws.NewMessage()
-	packet.PMsg().ProtocolId = constant.PROT_PLAYER_POS
-	packet.PMsg().Data = d
+	packet := ws.NewMessage(constant.PROT_PLAYER_POS)
+	packet.SetData(d)
 
 	ws.ClientConnHub.RangeConnsByFunc(func(s string, connection *ws.Connection) bool {
 		if movedPlayer.Id == connection.UserId() {
@@ -114,9 +113,9 @@ func sendPlayerPosToClients(ctx context.Context, movedPlayer *PlayerPos) {
 	})
 }
 
-func updatePlayerPos(ctx context.Context, conn *ws.Connection, msg *ws.Message) error {
+func updatePlayerPos(ctx context.Context, conn ws.IConnection, msg ws.IMessage) error {
 	playerPos := PlayerPos{}
-	json.Unmarshal(msg.PMsg().Data, &playerPos)
+	json.Unmarshal(msg.GetData(), &playerPos)
 	playerPos.Id = conn.UserId()
 	//conn.SetCommDataValue("pos", playerPos)
 
